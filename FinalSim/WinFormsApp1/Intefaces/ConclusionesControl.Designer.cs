@@ -30,8 +30,7 @@
         {
             label1 = new Label();
             lblConclusion = new Label();
-            lblIteraciones = new Label();
-            label2 = new Label();
+            lblMetricas = new Label();
             label3 = new Label();
             label4 = new Label();
             panel1 = new Panel();
@@ -60,31 +59,18 @@
             lblConclusion.Text = "Luego de      iteraciones la cantidad de personas rechazadas fue:";
             lblConclusion.Click += lblConclusion_Click;
             // 
-            // lblIteraciones
+            // lblMetricas
             // 
-            lblIteraciones.Anchor = AnchorStyles.None;
-            lblIteraciones.AutoSize = true;
-            lblIteraciones.Font = new Font("PP Radio Grotesk", 16.1999989F, FontStyle.Regular, GraphicsUnit.Point);
-            lblIteraciones.ForeColor = Color.White;
-            lblIteraciones.Location = new Point(178, 236);
-            lblIteraciones.Name = "lblIteraciones";
-            lblIteraciones.Size = new Size(30, 33);
-            lblIteraciones.TabIndex = 2;
-            lblIteraciones.Text = "n";
-            lblIteraciones.Click += lblIteraciones_Click;
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.None;
-            label2.AutoSize = true;
-            label2.Font = new Font("PP Radio Grotesk", 16.1999989F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(371, 280);
-            label2.Name = "label2";
-            label2.Size = new Size(144, 33);
-            label2.TabIndex = 3;
-            label2.Text = "0 Personas";
-            label2.Click += label2_Click;
+            lblMetricas.Anchor = AnchorStyles.None;
+            lblMetricas.AutoSize = true;
+            lblMetricas.Font = new Font("PP Radio Grotesk", 16.1999989F, FontStyle.Regular, GraphicsUnit.Point);
+            lblMetricas.ForeColor = Color.White;
+            lblMetricas.Location = new Point(371, 280);
+            lblMetricas.Name = "lblMetricas";
+            lblMetricas.Size = new Size(144, 33);
+            lblMetricas.TabIndex = 3;
+            lblMetricas.Text = "0 Personas";
+            lblMetricas.Click += label2_Click;
             // 
             // label3
             // 
@@ -115,10 +101,9 @@
             // panel1
             // 
             panel1.Controls.Add(label3);
-            panel1.Controls.Add(lblIteraciones);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(lblConclusion);
-            panel1.Controls.Add(label2);
+            panel1.Controls.Add(lblMetricas);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
@@ -145,8 +130,7 @@
 
         private Label label1;
         private Label lblConclusion;
-        private Label lblIteraciones;
-        private Label label2;
+        private Label lblMetricas;
         private Label label3;
         private Label label4;
         private Panel panel1;

@@ -72,6 +72,7 @@ namespace FinalSim.Entidades
 
             mozo.setLibre();
             mozo.colaPedidosPorEntregar = 0;
+            mozo.mesaPendiente = 0;
 
             // Mesas
 
@@ -93,6 +94,19 @@ namespace FinalSim.Entidades
             // Pedidos
 
             this.pedidos = new List<Pedido>();
+        }
+
+        public Pedido BuscarPedido(int numeroMesa)
+        {
+            for (int i = 0; i < this.pedidos.Count; i++)
+            {
+                if (pedidos[i].idMesa == numeroMesa + 1 && pedidos[i].estado != "morido")
+                {
+                    return pedidos[i];
+                }
+            }
+
+            return new Pedido();
         }
 
         public FilaSimulacion Clone()
@@ -278,40 +292,65 @@ namespace FinalSim.Entidades
         {
             Mesa smaller = new Mesa();
             int numero = 0;
+            List<Mesa> mesasList = new List<Mesa>();
             for (int i = 0; i < this.mesas.Length; i++)
+            {
+                if (this.mesas[i].estado == "Esperando Preparacion")
+                {
+                    mesasList.Add(this.mesas[i]);
+                }
+            }
+            for (int i = 0; i < mesasList.Count; i++)
             {
                 if (i == 0)
                 {
-                    smaller = mesas[0];
+                    smaller = mesasList[0];
+                    numero = 0;
                 }
-                else if (mesas[i].horaInicioEsperaComida < smaller.horaInicioEsperaComida)
+                else
                 {
-                    smaller = mesas[i];
-                    numero = i;
+                    if (mesasList[i].horaInicioEsperaComida < smaller.horaInicioEsperaComida)
+                    {
+                        smaller = mesasList[i];
+                        numero = i;
+                    }
                 }
             }
-
             return numero;
         }
 
         public int nextTableToServe()
         {
-            Mesa smaller = new Mesa();
-            int numero = 0;
+            Mesa smaller = null;
+
+            List<Mesa> mesasList = new List<Mesa>();
+
             for (int i = 0; i < this.mesas.Length; i++)
             {
-                if (i == 0)
+                if (this.mesas[i].estado == "Esperando Ordenar")
                 {
-                    smaller = mesas[0];
-                }
-                else if (mesas[i].horaInicioEsperaMozo < smaller.horaInicioEsperaMozo)
-                {
-                    smaller = mesas[i];
-                    numero = i;
+                    mesasList.Add(this.mesas[i]);
                 }
             }
 
-            return numero;
+            for (int i = 0; i < mesasList.Count; i++)
+            {
+                if (
+                    smaller == null
+                    || mesasList[i].horaInicioEsperaMozo < smaller.horaInicioEsperaMozo
+                )
+                {
+                    smaller = mesasList[i];
+                }
+            }
+
+            int posicion = -1;
+            if (smaller != null)
+            {
+                posicion = Array.IndexOf(this.mesas, smaller);
+            }
+
+            return posicion;
         }
 
         public int waitingWaiter()
@@ -410,9 +449,10 @@ namespace FinalSim.Entidades
                     new string[]
                     {
                         this.mozo.estado.ToString(),
-                        this.mozo.numeroMesa.ToString(),
+                        this.mozo.mesaActual.ToString(),
                         this.mozo.cantidadPersonasAtendidas.ToString(),
                         this.mozo.colaPedidosPorEntregar.ToString(),
+                        this.mozo.mesaPendiente.ToString(),
                     }
                 )
                 .ToArray();
@@ -429,6 +469,7 @@ namespace FinalSim.Entidades
                                 ? ""
                                 : m.horaInicioEsperaComida.ToString(),
                             m.horaInicioEsperaMozo == 0 ? "" : m.horaInicioEsperaMozo.ToString(),
+                            m.tiempoRemanenteToma.ToString(),
                         }
                     )
                     .ToArray();
@@ -468,7 +509,10 @@ namespace FinalSim.Entidades
                         new string[]
                         {
                             p.estado == "morido" ? "" : p.estado,
-                            p.estado == "morido" ? "" : p.idMesa.ToString()
+                            p.estado == "morido" ? "" : p.idMesa.ToString(),
+                            (p.estado == "morido" || p.horaFinalizacion == 0)
+                                ? ""
+                                : p.horaFinalizacion.ToString(),
                         }
                     )
                     .ToArray();

@@ -10,7 +10,9 @@ namespace FinalSim.Entidades
     {
         public string estado { get; set; }
 
-        public int numeroMesa { get; set; }
+        public int mesaActual { get; set; }
+
+        public int mesaPendiente { get; set; }
 
         public int colaPedidosPorEntregar { get; set; }
 
@@ -19,13 +21,14 @@ namespace FinalSim.Entidades
         public void setLibre()
         {
             this.estado = "Libre";
-            this.numeroMesa = 0;
+            this.mesaActual = 0;
             this.cantidadPersonasAtendidas = 0;
+            this.mesaPendiente = 0;
         }
 
         public void setTomandoPedido()
         {
-            this.estado = "Tomando pedido";
+            this.estado = "Tomando Pedido";
             this.cantidadPersonasAtendidas = 0;
         }
 
@@ -34,9 +37,10 @@ namespace FinalSim.Entidades
             return new Mozo
             {
                 estado = this.estado,
-                numeroMesa = this.numeroMesa,
+                mesaActual = this.mesaActual,
                 colaPedidosPorEntregar = this.colaPedidosPorEntregar,
-                cantidadPersonasAtendidas = this.cantidadPersonasAtendidas
+                cantidadPersonasAtendidas = this.cantidadPersonasAtendidas,
+                mesaPendiente = this.mesaPendiente
             };
         }
     }

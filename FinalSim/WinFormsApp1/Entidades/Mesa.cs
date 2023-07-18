@@ -18,6 +18,8 @@ namespace FinalSim.Entidades
 
         public int cantidadPersonas { get; set; }
 
+        public double tiempoRemanenteToma { get; set; }
+
         public void setTableToFree()
         {
             estado = "Libre";
@@ -48,7 +50,8 @@ namespace FinalSim.Entidades
                 tiempoPreparacion = this.tiempoPreparacion,
                 horaInicioEsperaMozo = this.horaInicioEsperaMozo,
                 horaInicioEsperaComida = this.horaInicioEsperaComida,
-                cantidadPersonas = this.cantidadPersonas
+                cantidadPersonas = this.cantidadPersonas,
+                tiempoRemanenteToma = this.tiempoRemanenteToma,
             };
         }
     }

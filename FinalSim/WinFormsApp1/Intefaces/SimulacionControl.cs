@@ -14,6 +14,7 @@ namespace FinalSim.Intefaces
     public partial class SimulacionControl : UserControl
     {
         private FilaSimulacion[] simulacion;
+        private int cantidadPedidos = 0;
 
         public SimulacionControl(FilaSimulacion[] filas)
         {
@@ -71,6 +72,7 @@ namespace FinalSim.Intefaces
                 "Cantidad De Personas Atendidas"
             );
             this.dgvSimulacion.Columns.Add("ColaPedidos", "Cola de Pedidos por Entregar");
+            this.dgvSimulacion.Columns.Add("MesaPendiente", "Mesa Pendiente");
 
             //Mesa
             for (int j = 1; j < 7; j++)
@@ -86,6 +88,7 @@ namespace FinalSim.Intefaces
                     "HoraInicioEsperaMozo" + j,
                     "Hora de Inicio Espera Mozo"
                 );
+                this.dgvSimulacion.Columns.Add("TiempoRemanenete" + j, "Tiempo Remanente Toma");
             }
 
             // Estadistica
@@ -93,46 +96,96 @@ namespace FinalSim.Intefaces
                 "CantidadClientesNoAtendidos",
                 "Cantidad Clientes No Atendidos"
             );
-
-            int i = 1;
             var contador = 0;
             bool overflow = false;
-            foreach (Cliente c in simulacion[simulacion.Length - 2].clientes)
+            int totalColumnsWidth = 0;
+
+            var simulacion2 = new List<FilaSimulacion>();
+
+            foreach (var sim in simulacion)
             {
-                try
+                if (sim == null)
                 {
-                    this.dgvSimulacion.Columns.Add("estado_cliente" + i.ToString(), "Estado");
-                    this.dgvSimulacion.Columns.Add("numero_mesa" + i.ToString(), "Numero Mesa");
-                    contador++;
+                    continue;
                 }
-                catch (Exception e)
+                else
+                {
+                    simulacion2.Add(sim);
+                }
+            }
+            this.simulacion = new FilaSimulacion[simulacion2.Count];
+            var l = 0;
+            foreach (var sim in simulacion2)
+            {
+                simulacion[l] = sim;
+                l++;
+            }
+
+            foreach (Cliente c in simulacion[simulacion.Length - 1].clientes)
+            {
+                if (totalColumnsWidth + 75 > 65535)
                 {
                     overflow = true;
-                    this.dgvSimulacion.Columns.Remove("estado_cliente" + i.ToString());
-                }
-                if (overflow)
                     break;
+                }
+                else
+                {
+                    var estadoClienteColumn = new DataGridViewTextBoxColumn();
+                    estadoClienteColumn.HeaderText = "Estado";
+                    estadoClienteColumn.Name = "estado_cliente" + contador.ToString();
+                    estadoClienteColumn.FillWeight = 25; // Asignar un valor menor a FillWeight
+                    this.dgvSimulacion.Columns.Add(estadoClienteColumn);
+
+                    var numeroMesaColumn = new DataGridViewTextBoxColumn();
+                    numeroMesaColumn.HeaderText = "Numero Mesa";
+                    numeroMesaColumn.Name = "numero_mesa" + contador.ToString();
+                    numeroMesaColumn.FillWeight = 25; // Asignar un valor menor a FillWeight
+                    this.dgvSimulacion.Columns.Add(numeroMesaColumn);
+
+                    contador++;
+                    totalColumnsWidth += 75;
+                }
             }
-            i = 0;
+
             if (!overflow)
             {
-                foreach (Pedido p in simulacion[simulacion.Length - 2].pedidos)
+                foreach (Pedido p in simulacion[simulacion.Length - 1].pedidos)
                 {
-                    try
-                    {
-                        this.dgvSimulacion.Columns.Add("estado_pedido" + i.ToString(), "Estado");
-                        this.dgvSimulacion.Columns.Add("id_mesa" + i.ToString(), "Numero Mesa");
-                        contador++;
-                    }
-                    catch (Exception ex)
+                    if (totalColumnsWidth + 75 > 65535)
                     {
                         overflow = true;
-                        this.dgvSimulacion.Columns.Remove("estado_pedido" + i.ToString());
-                    }
-                    if (overflow)
                         break;
+                    }
+                    else
+                    {
+                        var estadoPedidoColumn = new DataGridViewTextBoxColumn();
+                        estadoPedidoColumn.HeaderText = "Estado";
+                        estadoPedidoColumn.Name = "estado_pedido" + contador.ToString();
+                        estadoPedidoColumn.FillWeight = 25; // Asignar un valor menor a FillWeight
+                        this.dgvSimulacion.Columns.Add(estadoPedidoColumn);
+
+                        var idMesaColumn = new DataGridViewTextBoxColumn();
+                        idMesaColumn.HeaderText = "Numero Mesa";
+                        idMesaColumn.Name = "id_mesa" + contador.ToString();
+                        idMesaColumn.FillWeight = 25; // Asignar un valor menor a FillWeight
+                        this.dgvSimulacion.Columns.Add(idMesaColumn);
+
+                        var horaFinalizacionColumn = new DataGridViewTextBoxColumn();
+                        horaFinalizacionColumn.HeaderText = "Hora Finalizacion";
+                        horaFinalizacionColumn.Name = "hora_finalizacion" + contador.ToString();
+                        horaFinalizacionColumn.FillWeight = 25; // Asignar un valor menor a FillWeight
+                        this.dgvSimulacion.Columns.Add(horaFinalizacionColumn);
+
+                        cantidadPedidos++;
+                        contador++;
+                        totalColumnsWidth += 75;
+                    }
                 }
             }
+
+            // Resto del código
+
+            // Resto del código
 
             this.dgvSimulacion.ColumnHeadersHeightSizeMode =
                 DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
@@ -151,18 +204,13 @@ namespace FinalSim.Intefaces
             this.dgvSimulacion.AllowUserToAddRows = false;
             this.dgvSimulacion.AllowUserToDeleteRows = false;
 
-            var cantClientesTotal = simulacion[simulacion.Length - 2].clientes.Count();
+            var cantClientesTotal = simulacion[simulacion.Length - 1].clientes.Count();
             foreach (DataGridViewTextBoxColumn d in dgvSimulacion.Columns)
             {
                 d.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            //int counter = 0;
-            //foreach (FilaSimulacion f in simulacion)
-            //{
-            //    counter++;
-            //    this.dgvSimulacion.Rows.Add(f.ListaString(cantClientesTotal, contador));
-            //}
-            for (int k = 0; k < simulacion.Length - 2; k++)
+
+            for (int k = 0; k < simulacion.Length - 1; k++)
             {
                 this.dgvSimulacion.Rows.Add(simulacion[k].ListaString(cantClientesTotal, contador));
             }
@@ -210,29 +258,33 @@ namespace FinalSim.Intefaces
                 }
                 if (this.dgvSimulacion.Columns[i].Index == 28)
                 {
-                    CustomizeCell(i, e, "Mozo", 4);
+                    CustomizeCell(i, e, "Mozo", 5);
                 }
-                if (this.dgvSimulacion.Columns[i].Index == 32)
+                if (this.dgvSimulacion.Columns[i].Index == 33)
                 {
-                    CustomizeCell(i, e, "Mesa", 30);
+                    CustomizeCell(i, e, "Mesa", 36);
                 }
 
                 int c = 0;
-                foreach (Cliente cl in simulacion[simulacion.Length - 2].clientes)
+                foreach (Cliente cl in simulacion[simulacion.Length - 1].clientes)
                 {
-                    CustomizeCell(63 + c * 2, e, "Cliente" + (c + 1).ToString(), 2);
+                    CustomizeCell(70 + c * 2, e, "Cliente" + (c + 1).ToString(), 2);
                     c++;
-                    if (62 + c * 2 > 652)
+                    if (69 + c * 2 > 652)
                         break;
                 }
                 int constante = 1;
-                foreach (Pedido p in simulacion[simulacion.Length - 2].pedidos)
+                int cp = 0;
+                foreach (Pedido p in simulacion[simulacion.Length - 1].pedidos)
                 {
-                    if (62 + c * 2 > 652)
+                    if (70 + c * 2 + cp * 3 > 652)
                         break;
-                    CustomizeCell(63 + c * 2, e, "Pedido" + (constante).ToString(), 2);
-                    c++;
+                    if (constante >= cantidadPedidos - 1)
+                        break;
+                    CustomizeCell(70 + c * 2 + cp * 3, e, "Pedido" + (constante).ToString(), 3);
+
                     constante++;
+                    cp++;
                 }
                 this.dgvSimulacion.AllowUserToOrderColumns = false;
             }

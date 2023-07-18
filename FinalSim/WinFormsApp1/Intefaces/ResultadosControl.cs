@@ -17,12 +17,12 @@ namespace WinFormsApp1.Intefaces
         private SimulacionControl simulacion;
         private ConclusionesControl conclusion;
 
-        public ResultadosControl(FilaSimulacion[] filas)
+        public ResultadosControl(FilaSimulacion[] filas, long metricas, long cantIteraciones)
         {
             InitializeComponent();
             simulacion = new SimulacionControl(filas);
             simulacion.Dock = DockStyle.Fill;
-            conclusion = new ConclusionesControl();
+            conclusion = new ConclusionesControl(metricas, cantIteraciones);
             conclusion.Dock = DockStyle.Fill;
         }
 

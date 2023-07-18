@@ -272,14 +272,18 @@ namespace WinFormsApp1
             }
         }
 
-        public void CargarResultados(FilaSimulacion[] simulacion)
+        public void CargarResultados(
+            FilaSimulacion[] simulacion,
+            long metricas,
+            long cantIteraciones
+        )
         {
             //programar
             //el controlador llama a este metodo para mostrar los resultados
             //limpiamos el panel
             this.pnResultados.Controls.Clear();
             // creamos el control de resultados
-            var res = new ResultadosControl(simulacion);
+            var res = new ResultadosControl(simulacion, metricas, cantIteraciones);
             res.Dock = DockStyle.Fill;
 
             //lo mostramos
