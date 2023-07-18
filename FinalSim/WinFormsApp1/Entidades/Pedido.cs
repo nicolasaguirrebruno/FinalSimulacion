@@ -12,17 +12,20 @@ namespace FinalSim.Entidades
 
         public string estado { get; set; }
 
-        public Pedido(int idMesa, string estado)
+        public double horaFinalizacion { get; set; }
+
+        public Pedido(int idMesa, string estado, double horaFinalizacion)
         {
             this.idMesa = idMesa;
             this.estado = estado;
+            this.horaFinalizacion = horaFinalizacion;
         }
 
         public Pedido() { }
 
         public Pedido Clone()
         {
-            return new Pedido(this.idMesa, this.estado);
+            return new Pedido(this.idMesa, this.estado, this.horaFinalizacion);
         }
     }
 }

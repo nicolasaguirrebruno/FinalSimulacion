@@ -29,8 +29,8 @@ namespace FinalSim.Generadores
             double actualRand2 = 0;
 
             // Genero par de randoms
-            actualRand1 = rnd1;
-            actualRand2 = rnd2;
+            actualRand1 = Math.Truncate(rnd1 * 100) / 100;
+            actualRand2 = Math.Truncate(rnd2 * 100) / 100;
 
             // Genero las variables aleatorias
             float number1 = (float)(

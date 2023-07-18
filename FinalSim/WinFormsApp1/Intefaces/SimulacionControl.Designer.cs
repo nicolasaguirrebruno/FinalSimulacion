@@ -47,7 +47,7 @@
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             dgvSimulacion.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            dgvSimulacion.ColumnHeadersHeight = 30;
+            dgvSimulacion.ColumnHeadersHeight = 40;
             dgvSimulacion.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvSimulacion.Dock = DockStyle.Fill;
             dgvSimulacion.EnableHeadersVisualStyles = false;

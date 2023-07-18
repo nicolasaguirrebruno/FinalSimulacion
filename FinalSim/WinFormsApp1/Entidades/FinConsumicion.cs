@@ -23,7 +23,7 @@ namespace FinalSim.Entidades
         public double nextFin()
         {
             double horaFin = this.finesConsumicion[0];
-            for (int i = 1; i < 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 if ((finesConsumicion[i] < horaFin && finesConsumicion[i] != 0) || horaFin == 0)
                 {
