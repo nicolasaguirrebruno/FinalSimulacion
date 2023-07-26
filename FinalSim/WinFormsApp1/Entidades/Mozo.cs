@@ -12,8 +12,6 @@ namespace FinalSim.Entidades
 
         public int mesaActual { get; set; }
 
-        public int mesaPendiente { get; set; }
-
         public int colaPedidosPorEntregar { get; set; }
 
         public int cantidadPersonasAtendidas { get; set; }
@@ -23,7 +21,6 @@ namespace FinalSim.Entidades
             this.estado = "Libre";
             this.mesaActual = 0;
             this.cantidadPersonasAtendidas = 0;
-            this.mesaPendiente = 0;
         }
 
         public void setTomandoPedido()
@@ -40,7 +37,6 @@ namespace FinalSim.Entidades
                 mesaActual = this.mesaActual,
                 colaPedidosPorEntregar = this.colaPedidosPorEntregar,
                 cantidadPersonasAtendidas = this.cantidadPersonasAtendidas,
-                mesaPendiente = this.mesaPendiente
             };
         }
     }

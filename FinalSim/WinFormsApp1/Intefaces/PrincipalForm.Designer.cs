@@ -365,7 +365,7 @@
             label15.AutoSize = true;
             label15.Font = new Font("PP Radio Grotesk Black", 16.1999989F, FontStyle.Bold, GraphicsUnit.Point);
             label15.ForeColor = Color.FromArgb(224, 224, 224);
-            label15.Location = new Point(18, 216);
+            label15.Location = new Point(11, 216);
             label15.Name = "label15";
             label15.Size = new Size(254, 33);
             label15.TabIndex = 10;

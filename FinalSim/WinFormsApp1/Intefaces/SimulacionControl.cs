@@ -64,31 +64,23 @@ namespace FinalSim.Intefaces
                 this.dgvSimulacion.Columns.Add("FinConsumicion" + j, j.ToString());
             }
 
-            //Mozo
+            //Mozo antes 5 ahora 3
             this.dgvSimulacion.Columns.Add("EstadoMozo", "Estado");
             this.dgvSimulacion.Columns.Add("MesaMozo", "Mesa");
-            this.dgvSimulacion.Columns.Add(
-                "CantPersonasAtendidas",
-                "Cantidad De Personas Atendidas"
-            );
-            this.dgvSimulacion.Columns.Add("ColaPedidos", "Cola de Pedidos por Entregar");
-            this.dgvSimulacion.Columns.Add("MesaPendiente", "Mesa Pendiente");
 
-            //Mesa
+            this.dgvSimulacion.Columns.Add("ColaPedidos", "Cola de Pedidos por Entregar");
+
+            //Mesa antes 6 ahora 4
             for (int j = 1; j < 7; j++)
             {
                 this.dgvSimulacion.Columns.Add("EstadoMesa" + j, "Estado");
                 this.dgvSimulacion.Columns.Add("CantidadPersonas" + j, "Cantidad de Personas");
                 this.dgvSimulacion.Columns.Add("TiempoMesa" + j, "Tiempo Preparacion");
-                this.dgvSimulacion.Columns.Add(
-                    "HoraInicioEsperaComida" + j,
-                    "Hora de Inicio Espera Comida"
-                );
+
                 this.dgvSimulacion.Columns.Add(
                     "HoraInicioEsperaMozo" + j,
                     "Hora de Inicio Espera Mozo"
                 );
-                this.dgvSimulacion.Columns.Add("TiempoRemanenete" + j, "Tiempo Remanente Toma");
             }
 
             // Estadistica
@@ -210,7 +202,7 @@ namespace FinalSim.Intefaces
                 d.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            for (int k = 0; k < simulacion.Length - 1; k++)
+            for (int k = 0; k <= simulacion.Length - 1; k++)
             {
                 this.dgvSimulacion.Rows.Add(simulacion[k].ListaString(cantClientesTotal, contador));
             }
@@ -258,30 +250,30 @@ namespace FinalSim.Intefaces
                 }
                 if (this.dgvSimulacion.Columns[i].Index == 28)
                 {
-                    CustomizeCell(i, e, "Mozo", 5);
+                    CustomizeCell(i, e, "Mozo", 3);
                 }
-                if (this.dgvSimulacion.Columns[i].Index == 33)
+                if (this.dgvSimulacion.Columns[i].Index == 31)
                 {
-                    CustomizeCell(i, e, "Mesa", 36);
+                    CustomizeCell(i, e, "Mesa", 24);
                 }
 
                 int c = 0;
                 foreach (Cliente cl in simulacion[simulacion.Length - 1].clientes)
                 {
-                    CustomizeCell(70 + c * 2, e, "Cliente" + (c + 1).ToString(), 2);
+                    CustomizeCell(56 + c * 2, e, "Cliente" + (c + 1).ToString(), 2);
                     c++;
-                    if (69 + c * 2 > 652)
+                    if (55 + c * 2 > 652)
                         break;
                 }
                 int constante = 1;
                 int cp = 0;
                 foreach (Pedido p in simulacion[simulacion.Length - 1].pedidos)
                 {
-                    if (70 + c * 2 + cp * 3 > 652)
+                    if (56 + c * 2 + cp * 3 > 652)
                         break;
                     if (constante >= cantidadPedidos - 1)
                         break;
-                    CustomizeCell(70 + c * 2 + cp * 3, e, "Pedido" + (constante).ToString(), 3);
+                    CustomizeCell(56 + c * 2 + cp * 3, e, "Pedido" + (constante).ToString(), 3);
 
                     constante++;
                     cp++;

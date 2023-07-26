@@ -72,7 +72,6 @@ namespace FinalSim.Entidades
 
             mozo.setLibre();
             mozo.colaPedidosPorEntregar = 0;
-            mozo.mesaPendiente = 0;
 
             // Mesas
 
@@ -288,37 +287,6 @@ namespace FinalSim.Entidades
             return cantidadEsperando;
         }
 
-        public int nextTableToServeFood()
-        {
-            Mesa smaller = new Mesa();
-            int numero = 0;
-            List<Mesa> mesasList = new List<Mesa>();
-            for (int i = 0; i < this.mesas.Length; i++)
-            {
-                if (this.mesas[i].estado == "Esperando Preparacion")
-                {
-                    mesasList.Add(this.mesas[i]);
-                }
-            }
-            for (int i = 0; i < mesasList.Count; i++)
-            {
-                if (i == 0)
-                {
-                    smaller = mesasList[0];
-                    numero = 0;
-                }
-                else
-                {
-                    if (mesasList[i].horaInicioEsperaComida < smaller.horaInicioEsperaComida)
-                    {
-                        smaller = mesasList[i];
-                        numero = i;
-                    }
-                }
-            }
-            return numero;
-        }
-
         public int nextTableToServe()
         {
             Mesa smaller = null;
@@ -370,24 +338,24 @@ namespace FinalSim.Entidades
         {
             if (parametros.ProbabilidadMenu1 > parametros.ProbabilidadMenu2)
             {
-                if (rnd < parametros.ProbabilidadMenu1)
+                if (rnd > parametros.ProbabilidadMenu2 - 0.01)
                 {
-                    return 2;
+                    return 1;
                 }
                 else
                 {
-                    return 1;
+                    return 2;
                 }
             }
             else
             {
-                if (rnd < parametros.ProbabilidadMenu2)
+                if (rnd > parametros.ProbabilidadMenu1 - 0.01)
                 {
-                    return 1;
+                    return 2;
                 }
                 else
                 {
-                    return 2;
+                    return 1;
                 }
             }
         }
@@ -398,61 +366,63 @@ namespace FinalSim.Entidades
             var str = new string[]
             {
                 this.evento,
-                this.reloj.ToString(),
+                this.reloj.ToString("N2"),
                 this.llegadaClientes.tiempoEntreLlegadas == 0
                     ? ""
-                    : this.llegadaClientes.tiempoEntreLlegadas.ToString(),
+                    : this.llegadaClientes.tiempoEntreLlegadas.ToString("N2"),
                 this.llegadaClientes.proximaLlegada == 0
                     ? ""
-                    : this.llegadaClientes.proximaLlegada.ToString(),
+                    : this.llegadaClientes.proximaLlegada.ToString("N2"),
                 this.llegadaClientes.RNDCantidadPersonas == 0
                     ? ""
                     : this.llegadaClientes.RNDCantidadPersonas.ToString(),
                 this.llegadaClientes.CantidadPersonas == 0
                     ? ""
                     : this.llegadaClientes.CantidadPersonas.ToString(),
-                this.finTomaPedido.RNDMenu == 0 ? "" : this.finTomaPedido.RNDMenu.ToString(),
+                this.finTomaPedido.RNDMenu == 0 ? "" : this.finTomaPedido.RNDMenu.ToString("N2"),
                 this.finTomaPedido.menu == 0 ? "" : this.finTomaPedido.menu.ToString(),
                 this.finTomaPedido.tiempoPreparacion == 0
                     ? ""
-                    : this.finTomaPedido.tiempoPreparacion.ToString(),
+                    : this.finTomaPedido.tiempoPreparacion.ToString("N2"),
                 this.finTomaPedido.finTomaPedido == 0
                     ? ""
-                    : this.finTomaPedido.finTomaPedido.ToString(),
+                    : this.finTomaPedido.finTomaPedido.ToString("N2"),
                 this.finPreparacionPedido.finPreparacionPedido == 0
                     ? ""
-                    : this.finPreparacionPedido.finPreparacionPedido.ToString(),
+                    : this.finPreparacionPedido.finPreparacionPedido.ToString("N2"),
             };
             foreach (double fines in this.finPreparacionPedido.finesPreparacion)
             {
-                str = str.Concat(new string[] { fines == 0 ? "" : fines.ToString() }).ToArray();
+                str = str.Concat(new string[] { fines == 0 ? "" : fines.ToString("N2") }).ToArray();
             }
             str = str.Concat(
                     new string[]
                     {
                         this.finEntregaPedido.finEntregaPedido == 0
                             ? ""
-                            : this.finEntregaPedido.finEntregaPedido.ToString(),
-                        this.finConsumicion.RND1 == 0 ? "" : this.finConsumicion.RND1.ToString(),
-                        this.finConsumicion.RND2 == 0 ? "" : this.finConsumicion.RND2.ToString(),
-                        this.finConsumicion.N1 == 0 ? "" : this.finConsumicion.N1.ToString(),
-                        this.finConsumicion.N2 == 0 ? "" : this.finConsumicion.N2.ToString(),
+                            : this.finEntregaPedido.finEntregaPedido.ToString("N2"),
+                        this.finConsumicion.RND1 == 0
+                            ? ""
+                            : this.finConsumicion.RND1.ToString("N2"),
+                        this.finConsumicion.RND2 == 0
+                            ? ""
+                            : this.finConsumicion.RND2.ToString("N2"),
+                        this.finConsumicion.N1 == 0 ? "" : this.finConsumicion.N1.ToString("N2"),
+                        this.finConsumicion.N2 == 0 ? "" : this.finConsumicion.N2.ToString("N2"),
                     }
                 )
                 .ToArray();
 
             foreach (double fines in this.finConsumicion.finesConsumicion)
             {
-                str = str.Concat(new string[] { fines == 0 ? "" : fines.ToString() }).ToArray();
+                str = str.Concat(new string[] { fines == 0 ? "" : fines.ToString("N2") }).ToArray();
             }
             str = str.Concat(
                     new string[]
                     {
                         this.mozo.estado.ToString(),
                         this.mozo.mesaActual.ToString(),
-                        this.mozo.cantidadPersonasAtendidas.ToString(),
                         this.mozo.colaPedidosPorEntregar.ToString(),
-                        this.mozo.mesaPendiente.ToString(),
                     }
                 )
                 .ToArray();
@@ -464,12 +434,10 @@ namespace FinalSim.Entidades
                         {
                             m.estado.ToString(),
                             m.cantidadPersonas == 0 ? "" : m.cantidadPersonas.ToString(),
-                            m.tiempoPreparacion == 0 ? "" : m.tiempoPreparacion.ToString(),
-                            m.horaInicioEsperaComida == 0
+                            m.tiempoPreparacion == 0 ? "" : m.tiempoPreparacion.ToString("N2"),
+                            m.horaInicioEsperaMozo == 0
                                 ? ""
-                                : m.horaInicioEsperaComida.ToString(),
-                            m.horaInicioEsperaMozo == 0 ? "" : m.horaInicioEsperaMozo.ToString(),
-                            m.tiempoRemanenteToma.ToString(),
+                                : m.horaInicioEsperaMozo.ToString("N2"),
                         }
                     )
                     .ToArray();
@@ -488,7 +456,9 @@ namespace FinalSim.Entidades
                         new string[]
                         {
                             c.estado == "morido" ? "" : c.estado,
-                            c.estado == "morido" ? "" : c.numeroMesa.ToString()
+                            (c.estado == "morido" || c.numeroMesa == 0)
+                                ? ""
+                                : c.numeroMesa.ToString()
                         }
                     )
                     .ToArray();
@@ -512,7 +482,7 @@ namespace FinalSim.Entidades
                             p.estado == "morido" ? "" : p.idMesa.ToString(),
                             (p.estado == "morido" || p.horaFinalizacion == 0)
                                 ? ""
-                                : p.horaFinalizacion.ToString(),
+                                : p.horaFinalizacion.ToString("N2"),
                         }
                     )
                     .ToArray();

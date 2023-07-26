@@ -14,17 +14,13 @@ namespace FinalSim.Entidades
 
         public double horaInicioEsperaMozo { get; set; }
 
-        public double horaInicioEsperaComida { get; set; }
-
         public int cantidadPersonas { get; set; }
-
-        public double tiempoRemanenteToma { get; set; }
 
         public void setTableToFree()
         {
             estado = "Libre";
             tiempoPreparacion = 0;
-            horaInicioEsperaComida = 0;
+
             horaInicioEsperaMozo = 0;
             cantidadPersonas = 0;
         }
@@ -33,7 +29,6 @@ namespace FinalSim.Entidades
         {
             estado = "Esperando Comida";
             tiempoPreparacion = 0;
-            horaInicioEsperaComida = reloj;
         }
 
         public void setTableToRequestingOrder()
@@ -49,9 +44,7 @@ namespace FinalSim.Entidades
                 estado = this.estado,
                 tiempoPreparacion = this.tiempoPreparacion,
                 horaInicioEsperaMozo = this.horaInicioEsperaMozo,
-                horaInicioEsperaComida = this.horaInicioEsperaComida,
                 cantidadPersonas = this.cantidadPersonas,
-                tiempoRemanenteToma = this.tiempoRemanenteToma,
             };
         }
     }

@@ -43,12 +43,12 @@ namespace FinalSim.Controlador
         public void GenerateSimulation()
         {
             var indice = 0;
-            for (int i = 0; i < parametros.CantidadIteraciones - 1; i++)
+            for (int i = 0; i <= parametros.CantidadIteraciones - 1; i++)
             {
-                if (i + 1 == this.parametros.CantidadIteraciones)
-                {
-                    break;
-                }
+                //if (i + 1 == this.parametros.CantidadIteraciones)
+                //{
+                //    break;
+                //}
                 if (i == 0)
                 {
                     // Inicializamos condiciones iniciales
@@ -186,86 +186,119 @@ namespace FinalSim.Controlador
 
         public void FinTomaPedido(FilaSimulacion f)
         {
-            if (f.mozo.colaPedidosPorEntregar > 0)
+            if (f.mozo.cantidadPersonasAtendidas < f.mesas[mesaMozo].cantidadPersonas)
             {
-                // Calcular Fin Entrega
-            }
-            else
-            {
-                if (f.mozo.cantidadPersonasAtendidas < f.mesas[mesaMozo].cantidadPersonas)
+                double rnd = GenerateRandom();
+                int menu = f.chosedMenu(rnd);
+
+                f.finTomaPedido.RNDMenu = rnd;
+                f.finTomaPedido.menu = menu;
+
+                if (menu == 1)
                 {
-                    double rnd = GenerateRandom();
-                    int menu = f.chosedMenu(rnd);
-
-                    f.finTomaPedido.RNDMenu = rnd;
-                    f.finTomaPedido.menu = menu;
-
-                    if (menu == 1)
-                    {
-                        f.finTomaPedido.tiempoPreparacion = parametros.TiempoPreparacionMenu1;
-                    }
-                    else
-                    {
-                        f.finTomaPedido.tiempoPreparacion = parametros.TiempoPreparacionMenu2;
-                    }
-
-                    f.mesas[mesaMozo].tiempoPreparacion += f.finTomaPedido.tiempoPreparacion;
-
-                    f.mozo.cantidadPersonasAtendidas++;
-
-                    if (f.mozo.cantidadPersonasAtendidas == f.mesas[mesaMozo].cantidadPersonas)
-                    {
-                        f.finPreparacionPedido.finesPreparacion[mesaMozo] =
-                            f.mesas[mesaMozo].tiempoPreparacion + f.reloj;
-
-                        f.finPreparacionPedido.finPreparacionPedido =
-                            f.mesas[mesaMozo].tiempoPreparacion + f.reloj;
-
-                        Pedido pedido = new Pedido(f.mozo.mesaActual, "Sin Finalizar", 0);
-                        f.pedidos.Add(pedido);
-                        f.mesas[mesaMozo].horaInicioEsperaComida = f.reloj;
-                        CambioMesa(f);
-                    }
-                    else
-                    {
-                        f.finTomaPedido.finTomaPedido = f.reloj + parametros.TiempoTomaPedido;
-                        tomandoPedido = true;
-                    }
+                    f.finTomaPedido.tiempoPreparacion = parametros.TiempoPreparacionMenu1;
                 }
                 else
                 {
+                    f.finTomaPedido.tiempoPreparacion = parametros.TiempoPreparacionMenu2;
+                }
+
+                if (f.mesas[mesaMozo].tiempoPreparacion == 0)
+                {
+                    f.mesas[mesaMozo].tiempoPreparacion = f.finTomaPedido.tiempoPreparacion;
+                }
+                else if (f.finTomaPedido.tiempoPreparacion > f.mesas[mesaMozo].tiempoPreparacion)
+                {
+                    f.mesas[mesaMozo].tiempoPreparacion = f.finTomaPedido.tiempoPreparacion;
+                }
+
+                f.mozo.cantidadPersonasAtendidas++;
+
+                if (f.mozo.cantidadPersonasAtendidas == f.mesas[mesaMozo].cantidadPersonas)
+                {
                     f.finPreparacionPedido.finesPreparacion[mesaMozo] =
                         f.mesas[mesaMozo].tiempoPreparacion + f.reloj;
+
                     f.finPreparacionPedido.finPreparacionPedido =
                         f.mesas[mesaMozo].tiempoPreparacion + f.reloj;
 
                     Pedido pedido = new Pedido(f.mozo.mesaActual, "Sin Finalizar", 0);
                     f.pedidos.Add(pedido);
+
                     f.mesas[mesaMozo].estado = "Esperando Preparacion";
-                    f.mesas[mesaMozo].horaInicioEsperaComida = f.reloj;
                     CambioMesa(f);
                 }
+                else
+                {
+                    f.finTomaPedido.finTomaPedido = f.reloj + parametros.TiempoTomaPedido;
+                    tomandoPedido = true;
+                }
+            }
+            else
+            {
+                f.finPreparacionPedido.finesPreparacion[mesaMozo] =
+                    f.mesas[mesaMozo].tiempoPreparacion + f.reloj;
+                f.finPreparacionPedido.finPreparacionPedido =
+                    f.mesas[mesaMozo].tiempoPreparacion + f.reloj;
+
+                Pedido pedido = new Pedido(f.mozo.mesaActual, "Sin Finalizar", 0);
+                f.pedidos.Add(pedido);
+                f.mesas[mesaMozo].estado = "Esperando Preparacion";
+
+                CambioMesa(f);
             }
         }
 
         private void CambioMesa(FilaSimulacion f)
         {
-            if (f.amountTablesWaitingOrder() == 0)
+            if (f.mozo.colaPedidosPorEntregar > 0)
             {
-                f.mozo.setLibre();
-                f.mesas[mesaMozo].estado = "Esperando Preparacion";
-                mesaMozo = -1;
+                int smaller = -1;
+                for (int i = 0; i < f.pedidos.Count; i++)
+                {
+                    if (
+                        f.pedidos[i].estado == "Esperando Entrega"
+                        && f.pedidos[i].horaFinalizacion > 0
+                    )
+                    {
+                        if (
+                            smaller == -1
+                            || f.pedidos[i].horaFinalizacion < f.pedidos[smaller].horaFinalizacion
+                        )
+                        {
+                            smaller = i;
+                        }
+                    }
+                }
+                Pedido pedido = f.pedidos[smaller];
+
+                f.finEntregaPedido.finEntregaPedido = f.reloj + parametros.TiempoEntregaPedido;
+                mesaMozo = pedido.idMesa - 1;
+                f.mozo.mesaActual = mesaMozo + 1;
+                f.mozo.cantidadPersonasAtendidas = 0;
                 f.finTomaPedido.finTomaPedido = 0;
-                tomandoPedido = false;
+                f.mozo.estado = "Entregando";
             }
             else
             {
-                mesaMozo = f.nextTableToServe();
-                f.mozo.mesaActual = mesaMozo + 1;
-                f.mozo.estado = "Tomando Pedido";
-                f.finTomaPedido.finTomaPedido = f.reloj + parametros.TiempoTomaPedido;
-                f.mesas[mesaMozo].setTableToRequestingOrder();
-                tomandoPedido = true;
+                if (f.amountTablesWaitingOrder() == 0)
+                {
+                    f.mozo.setLibre();
+                    f.mesas[mesaMozo].estado = "Esperando Preparacion";
+                    mesaMozo = -1;
+                    f.finTomaPedido.finTomaPedido = 0;
+                    tomandoPedido = false;
+                }
+                else
+                {
+                    mesaMozo = f.nextTableToServe();
+                    f.mozo.mesaActual = mesaMozo + 1;
+                    f.mozo.estado = "Tomando Pedido";
+                    f.mozo.cantidadPersonasAtendidas = 0;
+                    f.finTomaPedido.finTomaPedido = f.reloj + parametros.TiempoTomaPedido;
+                    f.mesas[mesaMozo].setTableToRequestingOrder();
+                    tomandoPedido = true;
+                }
             }
         }
 
@@ -295,40 +328,57 @@ namespace FinalSim.Controlador
             f.mozo.colaPedidosPorEntregar++;
             if (f.mozo.estado == "Tomando Pedido")
             {
-                f.mozo.estado = "Entregando";
-                f.mozo.mesaPendiente = mesaMozo + 1;
-                f.mesas[mesaMozo].tiempoRemanenteToma = parametros.TiempoTomaPedido;
-                f.mesas[mesaMozo].estado = "Toma Interrumpida";
-
-                f.finEntregaPedido.finEntregaPedido = f.reloj + parametros.TiempoEntregaPedido;
-                if (f.amountFinished(f.reloj) == 1)
+                for (int i = 0; i < f.finPreparacionPedido.finesPreparacion.Length; i++)
                 {
-                    for (int i = 0; i < f.finPreparacionPedido.finesPreparacion.Length; i++)
+                    if (f.finPreparacionPedido.finesPreparacion[i] == f.reloj)
                     {
-                        if (f.finPreparacionPedido.finesPreparacion[i] == f.reloj)
-                        {
-                            f.finPreparacionPedido.finesPreparacion[i] = 0;
+                        f.finPreparacionPedido.finesPreparacion[i] = 0;
+                        f.mesas[i].estado = "Esperando Entrega";
 
-                            Pedido pedido = f.BuscarPedido(i);
+                        Pedido pedido = f.BuscarPedido(i);
 
-                            pedido.horaFinalizacion = f.reloj;
-                            pedido.estado = "Esperando Entrega";
-                            f.mozo.mesaActual = i + 1;
-                        }
+                        pedido.horaFinalizacion = f.reloj;
+                        pedido.estado = "Esperando Entrega";
                     }
                 }
-                else
-                {
-                    int mesaAservir = f.nextTableToServeFood();
 
-                    f.finPreparacionPedido.finesPreparacion[mesaAservir] = 0;
+                //f.mozo.estado = "Entregando";
+                //f.mozo.mesaPendiente = mesaMozo + 1;
+                //double fin = Math.Abs(f.reloj - f.finTomaPedido.finTomaPedido);
+                //f.mesas[mesaMozo].tiempoRemanenteToma =
+                //    fin == 0 ? parametros.TiempoTomaPedido : fin;
+                //f.mesas[mesaMozo].estado = "Toma Interrumpida";
 
-                    Pedido pedido = f.BuscarPedido(mesaAservir);
-                    pedido.horaFinalizacion = f.reloj;
-                    pedido.estado = "Esperando Entrega";
-                    f.mozo.mesaActual = mesaAservir + 1;
-                }
-                f.finTomaPedido.finTomaPedido = 0;
+                //f.finEntregaPedido.finEntregaPedido = f.reloj + parametros.TiempoEntregaPedido;
+                //if (f.amountFinished(f.reloj) == 1)
+                //{
+                //    for (int i = 0; i < f.finPreparacionPedido.finesPreparacion.Length; i++)
+                //    {
+                //        if (f.finPreparacionPedido.finesPreparacion[i] == f.reloj)
+                //        {
+                //            f.finPreparacionPedido.finesPreparacion[i] = 0;
+                //            f.mesas[i].estado = "Esperando Entrega";
+
+                //            Pedido pedido = f.BuscarPedido(i);
+
+                //            pedido.horaFinalizacion = f.reloj;
+                //            pedido.estado = "Esperando Entrega";
+                //            f.mozo.mesaActual = i + 1;
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    int mesaAservir = f.nextTableToServeFood();
+
+                //    f.finPreparacionPedido.finesPreparacion[mesaAservir] = 0;
+                //    f.mesas[mesaAservir].estado = "Esperando Entrega";
+                //    Pedido pedido = f.BuscarPedido(mesaAservir);
+                //    pedido.horaFinalizacion = f.reloj;
+                //    pedido.estado = "Esperando Entrega";
+                //    f.mozo.mesaActual = mesaAservir + 1;
+                //}
+                //f.finTomaPedido.finTomaPedido = 0;
             }
             else
             {
@@ -342,7 +392,7 @@ namespace FinalSim.Controlador
                         if (f.finPreparacionPedido.finesPreparacion[i] == f.reloj)
                         {
                             f.finPreparacionPedido.finesPreparacion[i] = 0;
-
+                            f.mesas[i].estado = "Esperando Entrega";
                             Pedido pedido = f.BuscarPedido(i);
 
                             pedido.horaFinalizacion = f.reloj;
@@ -360,7 +410,7 @@ namespace FinalSim.Controlador
                         {
                             f.finPreparacionPedido.finesPreparacion[i] = 0;
                             Pedido pedido = f.BuscarPedido(i);
-
+                            f.mesas[i].estado = "Esperando Entrega";
                             pedido.horaFinalizacion = f.reloj;
                             pedido.estado = "Esperando Entrega";
                         }
@@ -407,22 +457,10 @@ namespace FinalSim.Controlador
 
                     return;
                 }
-            }
-            if (f.mozo.colaPedidosPorEntregar == 0)
-            {
-                f.finEntregaPedido.finEntregaPedido = 0;
-
-                if (f.mozo.mesaPendiente != 0)
+                else if (f.mozo.colaPedidosPorEntregar == 0)
                 {
-                    f.finTomaPedido.finTomaPedido =
-                        f.mesas[f.mozo.mesaPendiente - 1].tiempoRemanenteToma + f.reloj;
+                    f.finEntregaPedido.finEntregaPedido = 0;
 
-                    f.mozo.mesaActual = f.mozo.mesaPendiente;
-                    f.mozo.estado = "Tomando Pedido";
-                    f.mozo.mesaPendiente = 0;
-                }
-                else
-                {
                     if (f.amountTablesWaitingOrder() == 0)
                     {
                         f.mozo.setLibre();
@@ -432,8 +470,26 @@ namespace FinalSim.Controlador
                         mesaMozo = f.nextTableToServe();
                         f.mozo.estado = "Tomando Pedido";
                         f.mozo.mesaActual = mesaMozo + 1;
+                        f.mesas[mesaMozo].estado = "Tomando Pedido";
                         f.finTomaPedido.finTomaPedido = f.reloj + parametros.TiempoTomaPedido;
                     }
+                }
+            }
+            else if (f.mozo.colaPedidosPorEntregar == 0)
+            {
+                f.finEntregaPedido.finEntregaPedido = 0;
+
+                if (f.amountTablesWaitingOrder() == 0)
+                {
+                    f.mozo.setLibre();
+                }
+                else
+                {
+                    mesaMozo = f.nextTableToServe();
+                    f.mozo.estado = "Tomando Pedido";
+                    f.mozo.mesaActual = mesaMozo + 1;
+                    f.mesas[mesaMozo].estado = "Tomando Pedido";
+                    f.finTomaPedido.finTomaPedido = f.reloj + parametros.TiempoTomaPedido;
                 }
             }
         }
@@ -473,6 +529,8 @@ namespace FinalSim.Controlador
             {
                 // Genero el siguiente fin consumicion usando el normal no usado
                 f.finConsumicion.finesConsumicion[f.mozo.mesaActual - 1] = normalNoUsado + f.reloj;
+                Pedido pedido = f.BuscarPedido(f.mozo.mesaActual - 1);
+                pedido.estado = "Entregado";
                 // Reinicio la variable del normalNoUsado
                 normalNoUsado = 0;
             }
@@ -585,7 +643,10 @@ namespace FinalSim.Controlador
                     f.finTomaPedido.menu = 0;
                     f.finTomaPedido.tiempoPreparacion = 0;
                     f.finPreparacionPedido.finPreparacionPedido = 0;
-                    f.finEntregaPedido.finEntregaPedido = 0;
+                    if (f.mozo.estado != "Entregando")
+                    {
+                        f.finEntregaPedido.finEntregaPedido = 0;
+                    }
                     f.finConsumicion.RND1 = 0;
                     f.finConsumicion.RND2 = 0;
                     f.finConsumicion.N1 = 0;
@@ -604,7 +665,10 @@ namespace FinalSim.Controlador
                     f.finConsumicion.RND2 = 0;
                     f.finConsumicion.N1 = 0;
                     f.finConsumicion.N2 = normalNoUsado == f.finConsumicion.N2 ? normalNoUsado : 0;
-                    f.finEntregaPedido.finEntregaPedido = 0;
+                    f.finEntregaPedido.finEntregaPedido =
+                        f.finEntregaPedido.finEntregaPedido == 0
+                            ? 0
+                            : f.finEntregaPedido.finEntregaPedido;
                     ;
                     break;
                 case "fin_preparacion_pedido":
@@ -628,12 +692,14 @@ namespace FinalSim.Controlador
                     f.finTomaPedido.menu = 0;
                     f.finTomaPedido.tiempoPreparacion = 0;
                     f.finPreparacionPedido.finPreparacionPedido = 0;
-
+                    f.finConsumicion.RND1 = normalNoUsado == 0 ? 0 : f.finConsumicion.RND1;
+                    f.finConsumicion.RND2 = normalNoUsado == 0 ? 0 : f.finConsumicion.RND2;
+                    f.finConsumicion.N1 = normalNoUsado == 0 ? 0 : f.finConsumicion.N1;
                     f.finConsumicion.N2 =
                         normalNoUsado == f.finConsumicion.N2 ? normalNoUsado : f.finConsumicion.N2;
                     break;
 
-                case "fin_consumicion":
+                case "fin_consumicion_pedido":
                     f.llegadaClientes.tiempoEntreLlegadas = 0;
                     f.llegadaClientes.RNDCantidadPersonas = 0;
                     f.llegadaClientes.CantidadPersonas = 0;
@@ -642,6 +708,12 @@ namespace FinalSim.Controlador
                     f.finTomaPedido.tiempoPreparacion = 0;
                     f.finPreparacionPedido.finPreparacionPedido = 0;
                     f.finEntregaPedido.finEntregaPedido = 0;
+                    f.finConsumicion.N1 = 0;
+                    f.finConsumicion.N2 =
+                        normalNoUsado == f.finConsumicion.N2 ? normalNoUsado : f.finConsumicion.N2;
+                    f.finConsumicion.RND1 = 0;
+                    f.finConsumicion.RND2 = 0;
+
                     break;
                 default:
                     Console.WriteLine("Opción no válida.");
