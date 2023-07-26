@@ -19,7 +19,7 @@ namespace FinalSim.Entidades
         public double nextFin()
         {
             double horaFin = (double)this.finesPreparacion[0];
-            for (int i = 1; i < 5; i++)
+            for (int i = 1; i < 6; i++)
             {
                 if ((finesPreparacion[i] < horaFin && finesPreparacion[i] != 0) || horaFin == 0)
                 {

@@ -22,6 +22,7 @@ namespace FinalSim.Controlador
         public bool desdeActivado = false;
         public bool tomandoPedido = false;
         public int mesaMozo = -1;
+        int lastTable;
 
         public ControladorSimulacion(PrincipalForm principal, Parametros parametros)
         {
@@ -186,6 +187,7 @@ namespace FinalSim.Controlador
 
         public void FinTomaPedido(FilaSimulacion f)
         {
+            lastTable = f.mozo.mesaActual;
             if (f.mozo.cantidadPersonasAtendidas < f.mesas[mesaMozo].cantidadPersonas)
             {
                 double rnd = GenerateRandom();
@@ -334,7 +336,7 @@ namespace FinalSim.Controlador
                     {
                         f.finPreparacionPedido.finesPreparacion[i] = 0;
                         f.mesas[i].estado = "Esperando Entrega";
-
+                        lastTable = i + 1;
                         Pedido pedido = f.BuscarPedido(i);
 
                         pedido.horaFinalizacion = f.reloj;
@@ -394,7 +396,7 @@ namespace FinalSim.Controlador
                             f.finPreparacionPedido.finesPreparacion[i] = 0;
                             f.mesas[i].estado = "Esperando Entrega";
                             Pedido pedido = f.BuscarPedido(i);
-
+                            lastTable = i + 1;
                             pedido.horaFinalizacion = f.reloj;
                             pedido.estado = "Esperando Entrega";
 
@@ -412,6 +414,7 @@ namespace FinalSim.Controlador
                             Pedido pedido = f.BuscarPedido(i);
                             f.mesas[i].estado = "Esperando Entrega";
                             pedido.horaFinalizacion = f.reloj;
+                            lastTable = i + 1;
                             pedido.estado = "Esperando Entrega";
                         }
                     }
@@ -422,7 +425,7 @@ namespace FinalSim.Controlador
         public void FinEntregaPedido(FilaSimulacion f)
         {
             CalcularFinConsumicion(f);
-
+            lastTable = f.mozo.mesaActual;
             if (f.mozo.colaPedidosPorEntregar > 0)
             {
                 f.mozo.colaPedidosPorEntregar--;
@@ -549,6 +552,7 @@ namespace FinalSim.Controlador
                     numeroMesa = i;
                     // Reinicio ese fin consumicion
                     f.finConsumicion.finesConsumicion[i] = 0;
+                    lastTable = i + 1;
                 }
             }
             if (!desdeActivado)
@@ -654,10 +658,11 @@ namespace FinalSim.Controlador
 
                     break;
                 case "fin_toma_pedido":
+
                     f.llegadaClientes.tiempoEntreLlegadas = 0;
                     f.llegadaClientes.RNDCantidadPersonas = 0;
                     f.llegadaClientes.CantidadPersonas = 0;
-                    if (tomandoPedido == true)
+                    if (f.finTomaPedido.finTomaPedido != 0)
                     {
                         f.finPreparacionPedido.finPreparacionPedido = 0;
                     }
@@ -670,6 +675,8 @@ namespace FinalSim.Controlador
                             ? 0
                             : f.finEntregaPedido.finEntregaPedido;
                     ;
+
+                    f.evento = "fin_toma_pedido " + "(" + lastTable + ")";
                     break;
                 case "fin_preparacion_pedido":
                     f.llegadaClientes.tiempoEntreLlegadas = 0;
@@ -683,8 +690,10 @@ namespace FinalSim.Controlador
                     f.finConsumicion.N1 = 0;
                     f.finConsumicion.N2 = normalNoUsado == f.finConsumicion.N2 ? normalNoUsado : 0;
                     f.finPreparacionPedido.finPreparacionPedido = 0;
+                    f.evento = "fin_preparacion_pedido " + "(" + lastTable + ")";
                     break;
                 case "fin_entrega_pedido":
+
                     f.llegadaClientes.tiempoEntreLlegadas = 0;
                     f.llegadaClientes.RNDCantidadPersonas = 0;
                     f.llegadaClientes.CantidadPersonas = 0;
@@ -697,6 +706,7 @@ namespace FinalSim.Controlador
                     f.finConsumicion.N1 = normalNoUsado == 0 ? 0 : f.finConsumicion.N1;
                     f.finConsumicion.N2 =
                         normalNoUsado == f.finConsumicion.N2 ? normalNoUsado : f.finConsumicion.N2;
+                    f.evento = "fin_entrega_pedido " + "(" + lastTable + ")";
                     break;
 
                 case "fin_consumicion_pedido":
@@ -713,7 +723,7 @@ namespace FinalSim.Controlador
                         normalNoUsado == f.finConsumicion.N2 ? normalNoUsado : f.finConsumicion.N2;
                     f.finConsumicion.RND1 = 0;
                     f.finConsumicion.RND2 = 0;
-
+                    f.evento = "fin_consumicion_pedido " + "(" + lastTable + ")";
                     break;
                 default:
                     Console.WriteLine("Opción no válida.");

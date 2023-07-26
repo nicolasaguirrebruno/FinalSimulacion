@@ -44,7 +44,7 @@
             dataGridViewCellStyle1.BackColor = Color.FromArgb(63, 28, 53);
             dataGridViewCellStyle1.Font = new Font("PP Radio Grotesk", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(187, 126, 169);
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(56, 38, 51);
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             dgvSimulacion.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
@@ -69,7 +69,7 @@
             dataGridViewCellStyle3.BackColor = Color.Black;
             dataGridViewCellStyle3.Font = new Font("PP Radio Grotesk", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridViewCellStyle3.ForeColor = Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(187, 126, 169);
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(112, 76, 101);
             dataGridViewCellStyle3.SelectionForeColor = Color.White;
             dgvSimulacion.RowsDefaultCellStyle = dataGridViewCellStyle3;
             dgvSimulacion.RowTemplate.Height = 29;

@@ -227,65 +227,65 @@ namespace FinalSim.Entidades
             return cantidadEsperando;
         }
 
-        public int InterrumpedTable()
-        {
-            int cantidadEsperando = 0;
+        //public int InterrumpedTable()
+        //{
+        //    int cantidadEsperando = 0;
 
-            for (int i = 0; i < this.mesas.Length; i++)
-            {
-                if (mesas[i].estado == "Toma Interrumpida")
-                {
-                    return i;
-                }
-            }
+        //    for (int i = 0; i < this.mesas.Length; i++)
+        //    {
+        //        if (mesas[i].estado == "Toma Interrumpida")
+        //        {
+        //            return i;
+        //        }
+        //    }
 
-            return cantidadEsperando;
-        }
+        //    return cantidadEsperando;
+        //}
 
-        public int amountTablesInterrumped()
-        {
-            int cantidadEsperando = 0;
+        //public int amountTablesInterrumped()
+        //{
+        //    int cantidadEsperando = 0;
 
-            foreach (var mesa in this.mesas)
-            {
-                if (mesa.estado == "Toma Interrumpida")
-                {
-                    cantidadEsperando++;
-                }
-            }
+        //    foreach (var mesa in this.mesas)
+        //    {
+        //        if (mesa.estado == "Toma Interrumpida")
+        //        {
+        //            cantidadEsperando++;
+        //        }
+        //    }
 
-            return cantidadEsperando;
-        }
+        //    return cantidadEsperando;
+        //}
 
-        public int amountTablesWaitingDelivery()
-        {
-            int cantidadEsperando = 0;
+        //public int amountTablesWaitingDelivery()
+        //{
+        //    int cantidadEsperando = 0;
 
-            foreach (var mesa in this.mesas)
-            {
-                if (mesa.estado == "Esperando Entrega")
-                {
-                    cantidadEsperando++;
-                }
-            }
+        //    foreach (var mesa in this.mesas)
+        //    {
+        //        if (mesa.estado == "Esperando Entrega")
+        //        {
+        //            cantidadEsperando++;
+        //        }
+        //    }
 
-            return cantidadEsperando;
-        }
+        //    return cantidadEsperando;
+        //}
 
-        public int amountFinished(double reloj)
-        {
-            int cantidadEsperando = 0;
+        //public int amountFinished(double reloj)
+        //{
+        //    int cantidadEsperando = 0;
 
-            for (int i = 0; i < this.finPreparacionPedido.finesPreparacion.Length; i++)
-            {
-                if (this.finPreparacionPedido.finesPreparacion[i] == reloj)
-                {
-                    cantidadEsperando += 1;
-                }
-            }
+        //    for (int i = 0; i < this.finPreparacionPedido.finesPreparacion.Length; i++)
+        //    {
+        //        if (this.finPreparacionPedido.finesPreparacion[i] == reloj)
+        //        {
+        //            cantidadEsperando += 1;
+        //        }
+        //    }
 
-            return cantidadEsperando;
-        }
+        //    return cantidadEsperando;
+        //}
 
         public int nextTableToServe()
         {
@@ -321,18 +321,18 @@ namespace FinalSim.Entidades
             return posicion;
         }
 
-        public int waitingWaiter()
-        {
-            int numeroMesa = 0;
-            for (int i = 0; i < this.mesas.Length; i++)
-            {
-                if (mesas[i].estado == "Esperando Mozo")
-                {
-                    return numeroMesa = i;
-                }
-            }
-            return numeroMesa;
-        }
+        //public int waitingWaiter()
+        //{
+        //    int numeroMesa = 0;
+        //    for (int i = 0; i < this.mesas.Length; i++)
+        //    {
+        //        if (mesas[i].estado == "Esperando Mozo")
+        //        {
+        //            return numeroMesa = i;
+        //        }
+        //    }
+        //    return numeroMesa;
+        //}
 
         public int chosedMenu(double rnd)
         {
@@ -421,7 +421,7 @@ namespace FinalSim.Entidades
                     new string[]
                     {
                         this.mozo.estado.ToString(),
-                        this.mozo.mesaActual.ToString(),
+                        this.mozo.mesaActual == 0 ? "" : this.mozo.mesaActual.ToString(),
                         this.mozo.colaPedidosPorEntregar.ToString(),
                     }
                 )
